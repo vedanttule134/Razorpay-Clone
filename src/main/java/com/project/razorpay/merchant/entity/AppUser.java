@@ -6,6 +6,8 @@ import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "app_user")
 public class AppUser {
 
     @Id
