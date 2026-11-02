@@ -1,8 +1,14 @@
 package com.project.razorpay.payment.entity;
 
 import com.project.razorpay.common.entity.Money;
+import com.project.razorpay.common.enums.OrderStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.sql.SQLType;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -18,4 +24,18 @@ public class OrderRecord {
 
     @Embedded
     private Money amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private OrderStatus orderStatus = OrderStatus.CREATED;
+
+    @Column(nullable = false)
+    private Integer attempts = 0;
+
+    @JdbcTypeCode((SqlTypes.JSON))
+    @Column(columnDefinition = "jsonb")
+    private Map<String, Object> notes;
+
+    @Column(nullable = false)
+    private LocalDateTime expiresAt;
 }

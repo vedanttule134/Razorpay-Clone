@@ -1,7 +1,12 @@
 package com.project.razorpay.payment.entity;
 
+import com.project.razorpay.common.entity.Money;
 import com.project.razorpay.common.enums.OrderStatus;
+import com.project.razorpay.common.enums.PaymentMethod;
+import com.project.razorpay.common.enums.PaymentStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -15,14 +20,43 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "merchant_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private OrderRecord order;
+
+    @Column(nullable = false)
     private UUID merchantId;
 
-    private OrderStatus orderStatus;
+    @Embedded
+    private Money money;
 
-    private Integer attempts;
+    @Column(nullable = false, length = 100)
+    private String idempotencyKey;
 
-    private Map<String, Object> notes;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private PaymentStatus status;
 
-    private LocalDateTime expiresAt;
+    @Column(nullable = false)
+    private PaymentMethod method;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "method_details", columnDefinition = "jsonb")
+    private Map<String, Object> methodDetails;
+
+    @Column(length = 100)
+    private String bankReference;
+
+    @Column(length = 100)
+    private String errorCode;
+
+    @Column(length = 255)
+    private String errorDescription;
+
+    private LocalDateTime authorizedAt;
+
+    private LocalDateTime capturedAt;
+
+    private LocalDateTime failedAt;
+
+    private LocalDateTime refundedAt;
 }
